@@ -117,27 +117,5 @@ System.out.println(text);
     ;
 
 
-/*        String apiKey = "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";
 
-        String json = "{"
-                + "\"model\":\"gpt-4\","
-                //     + "\"messages\":[{\"role\":\"user\",\"content\":\"Analizza questo contenuto:\\n"
-                + "\"messages\":[{\"role\":\"user\",\"content\":\""+prompt+":\\n"
-                + escapeJSON(contenuto) + "\"}]"
-                + "}";
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        byte[] output = response.body().getBytes() ;
-        // Salva output
-        Files.write(Paths.get("C:\\Users\\Admin\\Desktop\\output.txt"),output);
-    }*/
 }
