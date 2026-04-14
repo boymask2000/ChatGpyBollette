@@ -114,8 +114,5 @@ System.out.println(text);
         return base64;
     }
 
-    ;
-
-
 
 }
