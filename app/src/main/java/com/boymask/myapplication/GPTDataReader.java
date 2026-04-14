@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.boymask.myapplication.retrofit.ApiClient;
+import com.boymask.myapplication.retrofit.ApiResponseHandler;
 import com.boymask.myapplication.retrofit.ChatRequest;
 import com.boymask.myapplication.retrofit.ChatResponse;
 import com.boymask.myapplication.retrofit.OpenAIApi;
@@ -27,7 +28,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GPTDataReader extends AppCompatActivity {
-    TextView textView ;
+    TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +39,13 @@ public class GPTDataReader extends AppCompatActivity {
 
         textView = findViewById(R.id.textView);
 
-   //     String testo = getIntent().getStringExtra("testo");
+        //     String testo = getIntent().getStringExtra("testo");
 
         callChatGpt(pathContent);
+
+    }
+
+    private void callChatt(String pathContent) {
 
     }
 
@@ -47,12 +53,8 @@ public class GPTDataReader extends AppCompatActivity {
         OpenAIApi api = ApiClient.getClient().create(OpenAIApi.class);
         List<ChatRequest.Message> messages = new ArrayList<>();
 
-        String base64=getFileContent(pathContent);
+        String base64 = getFileContent(pathContent);
 
-       /* messages.add(new ChatRequest.Message(
-                "user",
-                "Spiegami cosa fa Retrofit in Android"
-        ));*/
         messages.add(new ChatRequest.Message(
                 "user",
                 "Estrai valori e descrizioni da questa bolletta in base64: " + base64
@@ -63,41 +65,34 @@ public class GPTDataReader extends AppCompatActivity {
                 messages
         );
 
-        api.chat(request).enqueue(new Callback<ChatResponse>() {
-            @Override
-            public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
-                textView.setText(response.toString());
-                if (response.isSuccessful() && response.body() != null) {
-                    String text = response.body()
-                            .choices.get(0)
-                            .message
-                            .content;
-                    Toast.makeText(GPTDataReader.this, text, Toast.LENGTH_LONG).show();
-System.out.println(text);
-                    textView.setText(text);
-                } else {
+        Call<ChatResponse> call = api.chat(request);
 
-                    try {
-                        String errorJson = response.errorBody().string();
+        ApiResponseHandler.enqueue(call, result -> {
 
-                        textView.setText("ERRORE RAW: " + errorJson);
+            if (result.isSuccess) {
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                String text = result.data
+                        .choices.get(0)
+                        .message
+                        .content;
+
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+                textView.setText(text);
+            } else {
+
+                Toast.makeText(
+                        this,
+                        "Errore: " + result.error.message,
+                        Toast.LENGTH_LONG
+                ).show();
+                textView.setText(result.error.message);
             }
 
-            @Override
-            public void onFailure(Call<ChatResponse> call, Throwable t) {
-                Toast.makeText(GPTDataReader.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                System.out.println(t.getMessage());
-                textView.setText(t.getMessage());
-            }
+
         });
     }
 
-    private String getFileContent(String pathContent)  {
+    private String getFileContent(String pathContent) {
         File file = new File(pathContent);
         byte[] buffer = new byte[(int) file.length()];
 
@@ -108,7 +103,8 @@ System.out.println(text);
                     throw new IOException("Lettura incompleta del file");
                 }
             }
-        }catch(Exception e ){}
+        } catch (Exception e) {
+        }
 
         String base64 = Base64.encodeToString(buffer, Base64.DEFAULT);
         return base64;
