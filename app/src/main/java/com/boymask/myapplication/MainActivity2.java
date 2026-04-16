@@ -52,7 +52,7 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     private String leggiFile(Uri uri) {
-        File file = new File(getCacheDir(), "temp.bin");
+        File file = new File(getCacheDir(), "temp.pdf");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {

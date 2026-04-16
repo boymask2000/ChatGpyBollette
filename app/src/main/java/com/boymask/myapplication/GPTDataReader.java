@@ -1,7 +1,7 @@
 package com.boymask.myapplication;
 
 import android.os.Bundle;
-import android.util.Base64;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,13 +16,23 @@ import com.boymask.myapplication.retrofit.ApiResponseHandler;
 import com.boymask.myapplication.retrofit.ChatRequest;
 import com.boymask.myapplication.retrofit.ChatResponse;
 import com.boymask.myapplication.retrofit.OpenAIApi;
+import com.boymask.myapplication.retrofit.RetrofitClient;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,70 +55,134 @@ public class GPTDataReader extends AppCompatActivity {
 
     }
 
-    private void callChatt(String pathContent) {
-
-    }
-
     private void callChatGpt(String pathContent) {
-        OpenAIApi api = ApiClient.getClient().create(OpenAIApi.class);
-        List<ChatRequest.Message> messages = new ArrayList<>();
+        File file = new File(pathContent);
 
-        String base64 = getFileContent(pathContent);
+        RequestBody requestFile =
+                RequestBody.create(file, MediaType.parse("application/octet-stream"));
 
-        messages.add(new ChatRequest.Message(
-                "user",
-                "Estrai valori e descrizioni da questa bolletta in base64: " + base64
-        ));
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
-        ChatRequest request = new ChatRequest(
-                "gpt-4o-mini",
-                messages
-        );
+        RequestBody purpose =
+                RequestBody.create("assistants", MediaType.parse("text/plain"));
 
-        Call<ChatResponse> call = api.chat(request);
+        OpenAIApi api = RetrofitClient.getClient();
 
-        ApiResponseHandler.enqueue(call, result -> {
+        // STEP 1: UPLOAD
+        api.uploadFile("Bearer " + OpenAIApi.API_KEY, body, purpose)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            if (!response.isSuccessful()) {
+                                System.out.println("Upload error "+response);
+                                System.out.println(   response.errorBody().string());
+                                return;
+                            }
 
-            if (result.isSuccess) {
+                            String res = response.body().string();
+                            JSONObject json = new JSONObject(res);
 
-                String text = result.data
-                        .choices.get(0)
-                        .message
-                        .content;
+                            String fileId = json.getString("id");
 
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
-                textView.setText(text);
-            } else {
+                            System.out.println("File caricato: " + fileId);
 
-                Toast.makeText(
-                        this,
-                        "Errore: " + result.error.message,
-                        Toast.LENGTH_LONG
-                ).show();
-                textView.setText(result.error.message);
-            }
+                            // STEP 2: ANALISI
+                            analyze(api, OpenAIApi.API_KEY, fileId);
 
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-        });
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
     }
 
-    private String getFileContent(String pathContent) {
-        File file = new File(pathContent);
-        byte[] buffer = new byte[(int) file.length()];
+    private static void analyze(OpenAIApi api, String apiKey, String fileId) {
 
         try {
-            try (FileInputStream fis = new FileInputStream(file)) {
-                int read = fis.read(buffer);
-                if (read != buffer.length) {
-                    throw new IOException("Lettura incompleta del file");
-                }
-            }
-        } catch (Exception e) {
-        }
+            JSONObject requestJson = new JSONObject();
 
-        String base64 = Base64.encodeToString(buffer, Base64.DEFAULT);
-        return base64;
+            requestJson.put("model", "gpt-5.4-mini");
+
+            JSONArray inputArray = new JSONArray();
+
+            JSONObject message = new JSONObject();
+            message.put("role", "user");
+
+            JSONArray contentArray = new JSONArray();
+
+// testo richiesta
+            contentArray.put(new JSONObject()
+                    .put("type", "input_text")
+               //     .put("text", "Estrai nome, data, importo e codice fiscale in formato JSON"));
+            .put("text", Prompt.PROMPT));
+
+// file tramite file_id
+            contentArray.put(new JSONObject()
+                    .put("type", "input_file")
+                    .put("file_id", fileId));
+
+            message.put("content", contentArray);
+            inputArray.put(message);
+
+            requestJson.put("input", inputArray);
+            RequestBody body = RequestBody.create(
+                    requestJson.toString(),
+                    MediaType.parse("application/json")
+            );
+            api.analyzeFile("Bearer " + apiKey, body)
+                    .enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            try {
+                                if (response.isSuccessful()) {
+                                    System.out.println("RISULTATO:");
+                                    System.out.println(response.body().string());
+                                    reportOutput(response.body().string());
+                                } else {
+                                    System.out.println("Errore analisi");
+                                    System.out.println(   response.errorBody().string());
+                                    reportOutput(response.errorBody().string());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    private static void reportOutput(String string) throws JSONException {
+        StringBuilder finalText = new StringBuilder();
+        JSONObject json = new JSONObject(string);
+        JSONArray output = json.getJSONArray("output");
 
+        for (int i = 0; i < output.length(); i++) {
+            JSONArray content = output.getJSONObject(i).getJSONArray("content");
+
+            for (int j = 0; j < content.length(); j++) {
+                JSONObject item = content.getJSONObject(j);
+
+                if ("output_text".equals(item.getString("type"))) {
+                    finalText.append(item.getString("text"));
+                }
+            }
+        }
+
+        System.out.println(finalText.toString());
+    }
 }
