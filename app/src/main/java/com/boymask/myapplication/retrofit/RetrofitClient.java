@@ -12,9 +12,9 @@ public class RetrofitClient {
 
     public static OpenAIApi getClient() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)   // importante per risposte lente
-                .writeTimeout(60, TimeUnit.SECONDS)  // importante per upload file
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)   // importante per risposte lente
+                .writeTimeout(120, TimeUnit.SECONDS)  // importante per upload file
                 .retryOnConnectionFailure(true)
                 .build();
 

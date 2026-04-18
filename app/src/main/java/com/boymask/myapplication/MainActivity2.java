@@ -3,7 +3,7 @@ package com.boymask.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,8 +20,11 @@ import java.io.InputStream;
 
 public class MainActivity2 extends AppCompatActivity {
 
+    public static  String API_KEY = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main2);
@@ -30,8 +33,9 @@ public class MainActivity2 extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        API_KEY = Furbo.ketKey(this);
 
-        Button button = findViewById(R.id.button);
+        ImageButton button = findViewById(R.id.button);
 
         ActivityResultLauncher<String> filePicker = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -52,6 +56,7 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     private String leggiFile(Uri uri) {
+        System.out.println(uri);
         File file = new File(getCacheDir(), "temp.pdf");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <!-- COLONNA 1: NON EDITABILE -->
+    <TextView
+        android:id="@+id/textLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Label"
+        android:padding="12dp"
+        android:textStyle="bold"/>
+
+    <!-- COLONNA 2: EDITABILE -->
+    <EditText
+        android:id="@+id/editValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Valore"
+        android:padding="12dp"
+        android:inputType="text"/>
+</LinearLayout>

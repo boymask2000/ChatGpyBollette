@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "360365598391",
+    "project_id": "chatgptsuggester",
+    "storage_bucket": "chatgptsuggester.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360365598391:android:7663a74b0b207ec2ac4f32",
+        "android_client_info": {
+          "package_name": "com.boymask.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuaEBf6jeh0c_SdJAyCHJvT4-sabeYox4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
