@@ -6,7 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Suggester">
-
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/rysolvia"
+        android:scaleType="fitCenter"
+        android:alpha="0.1" />
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
