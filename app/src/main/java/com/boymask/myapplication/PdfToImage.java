@@ -15,7 +15,9 @@ public class PdfToImage {
 
         ParcelFileDescriptor pfd =
                 context.getContentResolver().openFileDescriptor(uri, "r");
-
+        if (pfd == null) {
+            throw new IllegalStateException("Cannot open PDF");
+        }
         PdfRenderer renderer = new PdfRenderer(pfd);
 
         List<Bitmap> pages = new ArrayList<>();
@@ -23,10 +25,11 @@ public class PdfToImage {
         for (int i = 0; i < renderer.getPageCount(); i++) {
 
             PdfRenderer.Page page = renderer.openPage(i);
-
+            int width = (int) (page.getWidth() * 0.5);
+            int height = (int) (page.getHeight() * 0.5);
             Bitmap bitmap = Bitmap.createBitmap(
-                    page.getWidth(),
-                    page.getHeight(),
+                    width,
+                    height,
                     Bitmap.Config.ARGB_8888
             );
 

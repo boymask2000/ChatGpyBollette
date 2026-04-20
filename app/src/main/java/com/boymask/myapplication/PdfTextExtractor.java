@@ -15,7 +15,7 @@ public class PdfTextExtractor {
             try {
 
                 List<Bitmap> pages = PdfToImage.render(context, uri);
-
+                System.out.println("PAGES: " + pages.size());
                 StringBuilder fullText = new StringBuilder();
 
                 for (Bitmap page : pages) {

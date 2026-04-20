@@ -3,6 +3,7 @@ package com.boymask.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -11,13 +12,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.boymask.myapplication.listaparametri.RowModel;
+import com.boymask.myapplication.listaparametri.TableAdapter;
 import com.boymask.myapplication.retrofit.OpenAIApi;
 import com.boymask.myapplication.retrofit.RetrofitClient;
 
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -32,130 +41,164 @@ import retrofit2.Retrofit;
 public class GPTDataReaderPDF extends AppCompatActivity {
     String API_KEY = MainActivity2.API_KEY;
 
-        private static final int PICK_PDF = 1;
+    private static final int PICK_PDF = 1;
 
-        private TextView txtResult;
-        private String apiKey =API_KEY;
+    private ArrayList<RowModel> data = new ArrayList<>();
+    private Button askGpt;
+    private View loadingContainer;
+    private View progressBar;
+    private View loadingText;
+    private RecyclerView recyclerView;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_gptdata_reader_pdf);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_gptdata_reader_pdf);
 
-            Button btn = findViewById(R.id.btnSelect);
-            txtResult = findViewById(R.id.txtResult);
+        progressBar = findViewById(R.id.progressBar);
+        loadingText = findViewById(R.id.loadingText);
+        askGpt = findViewById(R.id.askgpt);
+        loadingContainer = findViewById(R.id.loadingContainer);
+        recyclerView = findViewById(R.id.recyclerView);
 
-            btn.setOnClickListener(v -> openFilePicker());
-        }
+// all'inizio mostro loading e nascondo lista
+        loadingContainer.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        askGpt.setVisibility(View.GONE);
 
-        private void openFilePicker() {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("application/pdf");
-            startActivityForResult(intent, PICK_PDF);
-        }
+        askGpt.setOnClickListener(v -> {
 
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == PICK_PDF && resultCode == RESULT_OK) {
-                Uri uri = data.getData();
-                processPdf(uri);
-            }
-        }
+            Intent intent = new Intent(GPTDataReaderPDF.this, Suggester.class);
+            intent.putExtra("datiBolletta", collectDataString());
+            startActivity(intent);
+        });
+        String pathContent = getIntent().getStringExtra("content");
+        processPdf(pathContent);
+    }
 
-        private void processPdf(Uri uri) {
-            new Thread(() -> {
-                try {
-                    File file = FileUtil.from(this, uri);
 
-              //      String text = PdfProcessor.extractAndFilter(file);
-                 //   String prompt = PromptBuilder.build(text);
+    private void processPdf(String pathContent) {
+        Uri uri = Uri.parse(pathContent);
 
-                    PdfTextExtractor.extract(this, uri, t -> {
 
-                        String filtered = BillFilter.clean(t);
+        try {
 
-                        String prompt = PromptBuilder.build(filtered);
+            PdfTextExtractor.extract(this, uri, t -> {
 
-                        callApi(prompt);
+                runOnUiThread(() -> reportOutput(t));
 
-                    });
+            });
 
              /*       runOnUiThread(() -> txtResult.setText("Analisi in corso..."));
 
                     callApi(prompt);*/
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(() -> txtResult.setText("Errore PDF"));
-                }
-            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            runOnUiThread(() -> reportOutput("Errore PDF"));
         }
 
-        private void callApi(String prompt) {
-
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(60, TimeUnit.SECONDS)
-                    .writeTimeout(60, TimeUnit.SECONDS)
-                    .build();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://api.openai.com/")
-                    .client(client)
-                    .build();
-
-            OpenAIApi api = retrofit.create(OpenAIApi.class);
-
-            String json = "{ \"model\": \"gpt-5.4\", \"input\": \"" +
-                    prompt.replace("\"", "\\\"") + "\" }";
-
-            RequestBody body = RequestBody.create(
-                    MediaType.parse("application/json"), json);
-
-            api.analyzeFile("Bearer " + API_KEY, body)
-                    .enqueue(new Callback<ResponseBody>() {
-
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            try {
-                                if (response.isSuccessful() && response.body() != null) {
-
-                                    String res = response.body().string();
-                                    BollettaData data = Parser.parse(res);
-
-                                    runOnUiThread(() -> showResult(data));
-
-                                } else {
-                                    runOnUiThread(() -> {
-                                        try {
-                                            txtResult.setText("Errore API "+response.errorBody().string());
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    });
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            runOnUiThread(() -> txtResult.setText("Errore rete"));
-                        }
-                    });
-        }
-
-        private void showResult(BollettaData b) {
-            txtResult.setText(
-                    "Intestatario: " + b.intestatario + "\n\n" +
-                            "Totale: " + b.totale + "\n" +
-                            "Consumo: " + b.consumoSmc + "\n" +
-                            "Periodo: " + b.periodo + "\n" +
-                            "Fornitore: " + b.fornitore
-            );
-        }
     }
+
+
+    private void reportOutput(String string) {
+        runOnUiThread(() -> {
+            //   loadingContainer.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            askGpt.setVisibility(View.VISIBLE);
+
+            progressBar.setVisibility(View.GONE);
+            loadingText.setVisibility(View.GONE);
+        });
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+        // 🔥 dati iniziali
+        data.clear();
+
+        try {
+            JSONObject jsonObject = new JSONObject(string);
+
+            String text = jsonObject
+                    .getJSONArray("output")
+                    .getJSONObject(0)
+                    .getJSONArray("content")
+                    .getJSONObject(0)
+                    .getString("text");
+            text = text.replace("```json", "")
+                    .replace("```", "")
+                    .trim();
+            JSONObject innerJson = new JSONObject(text);
+
+            // 👇 questo funziona anche se ci sono \n e \"
+            // JSONObject innerJson = new JSONObject(text);
+
+            //   textView.setText("");
+
+            StringBuilder result = new StringBuilder();
+
+            try {
+                // JSONObject jsonObject = new JSONObject(string);
+
+                Iterator<String> keys = innerJson.keys();
+
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    System.out.println(key);
+                    Object value = innerJson.optString(key);
+                    setValues(key, value.toString(), data);
+                    //      data.add(new RowModel(key,value.toString()));
+
+                    //   textView.append(key + ":" + value.toString());
+
+                }
+                TableAdapter adapter = new TableAdapter(data);
+
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                recyclerView.setAdapter(adapter);
+            } catch (Exception e) {
+                e.printStackTrace();
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setValues(String key, String value, ArrayList<RowModel> data) {
+        String s = key + " " + value;
+        s = s.replace("\"", "");
+
+        String[] coppie = s.split(",");
+        for (String coppia : coppie) {
+            int index = coppia.lastIndexOf(":");
+            if (index == -1) {
+                data.add(new RowModel(coppia, ""));
+                continue;
+            }
+            index = coppia.lastIndexOf(":");
+            if (index == -1) {
+                data.add(new RowModel(key, value));
+                continue;
+            }
+            String v1 = coppia.substring(0, index);
+            String v2 = coppia.substring(index + 1);
+            data.add(new RowModel(v1, v2));
+        }
+
+    }
+
+    private String collectDataString() {
+        StringBuilder out = new StringBuilder();
+        for (RowModel m : data) {
+            if (out.length() > 0) out.append(',');
+            out.append(m.getLabel()).append(":").append(m.getValue());
+        }
+        return out.toString();
+    }
+
+}

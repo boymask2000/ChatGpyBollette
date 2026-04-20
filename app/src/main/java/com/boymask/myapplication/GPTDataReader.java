@@ -201,6 +201,7 @@ public class GPTDataReader extends AppCompatActivity {
     }
 
     private void reportOutput(String string) {
+        data.clear();
         runOnUiThread(() -> {
             //   loadingContainer.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
