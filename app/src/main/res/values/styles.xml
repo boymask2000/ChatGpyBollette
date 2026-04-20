@@ -12,4 +12,9 @@
     <style name="MioTema" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/rysolvia</item>
     </style>
+
+
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- personalizzazioni -->
+    </style>
 </resources>
