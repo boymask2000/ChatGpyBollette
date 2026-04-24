@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +44,7 @@ public class MainActivity2 extends AppCompatActivity {
 
 
         ImageButton button = findViewById(R.id.button);
+        TextView messaggio = findViewById(R.id.messaggio);
 
         ActivityResultLauncher<String> filePicker = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -62,6 +64,8 @@ public class MainActivity2 extends AppCompatActivity {
         });
 
         DBHandler.init(this);
+
+        DBHandler.checkBolletteDispnibili(button, messaggio,this);
     }
 
     @Override
@@ -81,13 +85,6 @@ public class MainActivity2 extends AppCompatActivity {
         }else {
             return super.onOptionsItemSelected(item);
         }
-    }
-
-
-    private void startPayManagement() {
-        Intent intent = new Intent(MainActivity2.this, MainPayActivity.class);
-
-        startActivity(intent);
     }
 
     private String leggiFile(Uri uri) {
