@@ -3,6 +3,9 @@ package com.boymask.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -14,6 +17,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,7 +26,7 @@ import java.io.InputStream;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    public static  String API_KEY = "";
+    public static String API_KEY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,7 @@ public class MainActivity2 extends AppCompatActivity {
             return insets;
         });
         API_KEY = Furbo.ketKey(this);
+
 
         ImageButton button = findViewById(R.id.button);
 
@@ -55,46 +61,65 @@ public class MainActivity2 extends AppCompatActivity {
             filePicker.launch("*/*"); // puoi mettere "text/plain"
         });
 
+    }
 
-        Button testpay = findViewById(R.id.testpay);
-        testpay.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity2.this, MainPayActivity.class);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection.
+        int id = item.getItemId();
+        if (id == R.id.stato) {
+            startPayManagement();
+            return true;
+        } else if (id == R.id.help) {
+            //  showHelp();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
 
-            startActivity(intent);
-        });
+
+    private void startPayManagement() {
+        Intent intent = new Intent(MainActivity2.this, MainPayActivity.class);
+
+        startActivity(intent);
     }
 
     private String leggiFile(Uri uri) {
-        System.out.println(uri);
+        Log.d("MainActivity2", "Reading file from URI: " + uri);
         File file = new File(getCacheDir(), "temp.pdf");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             InputStream is = getContentResolver().openInputStream(uri);
 
+            if (is != null) {
+                int nRead;
+                byte[] data = new byte[4096];
 
-            int nRead;
-            byte[] data = new byte[4096];
+                while ((nRead = is.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
 
-            while ((nRead = is.read(data, 0, data.length)) != -1) {
-                buffer.write(data, 0, nRead);
+                is.close();
+
+                //Salvo i dati in un file temporaneo
+
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(buffer.toByteArray());
+                fos.close();
             }
-
-            is.close();
-
-            //Salvo i dati in un file temporaneo
-
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(buffer.toByteArray());
-            fos.close();
-
-
-
         } catch (Exception e) {
-            e.printStackTrace();
-
+            Log.e("MainActivity2", "Error reading file", e);
         }
 
         return file.getAbsolutePath();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.app_menu, menu);
+        return true;
     }
 }
