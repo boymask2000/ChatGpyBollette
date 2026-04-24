@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.stripe:stripe-android:23.5.0'
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
 

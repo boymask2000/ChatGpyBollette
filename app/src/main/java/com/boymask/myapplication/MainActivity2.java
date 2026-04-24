@@ -3,6 +3,7 @@ package com.boymask.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
@@ -52,6 +53,14 @@ public class MainActivity2 extends AppCompatActivity {
 
         button.setOnClickListener(v -> {
             filePicker.launch("*/*"); // puoi mettere "text/plain"
+        });
+
+
+        Button testpay = findViewById(R.id.testpay);
+        testpay.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity2.this, MainPayActivity.class);
+
+            startActivity(intent);
         });
     }
 

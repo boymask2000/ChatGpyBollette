@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/thumb"
@@ -12,6 +13,9 @@
         android:roundIcon="@mipmap/thumb"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
+        <activity
+            android:name=".MainPayActivity"
+            android:exported="false" />
         <activity
             android:name=".Suggester"
             android:exported="false" />
