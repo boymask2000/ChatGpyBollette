@@ -3,6 +3,7 @@ package com.boymask.myapplication;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,10 +41,19 @@ public class MainPayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         api = RetrofitBootClient.getClient().create(PaymentApi.class);
 
         binding = ActivityMainPayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Button esci = findViewById(R.id.esci);
+
+        esci.setOnClickListener(v -> {
+
+            MainPayActivity.this.finish();
+        });
 
         PaymentConfiguration.init(
                 getApplicationContext(),

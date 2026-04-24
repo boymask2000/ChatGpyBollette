@@ -42,6 +42,19 @@ android {
 }
 
 dependencies {
+    implementation libs.androidx.activity.ktx
+
+    //--------------- INIZIO ROOM ----------------------------------------
+
+    def room_version = "2.8.4"
+    implementation "androidx.room:room-runtime:$room_version"
+
+    // If this project only uses Java source, use the Java annotationProcessor
+    // No additional plugins are necessary
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    //--------------- FINE ROOM ----------------------------------------
+
     implementation 'com.stripe:stripe-android:23.5.0'
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:34.12.0"))

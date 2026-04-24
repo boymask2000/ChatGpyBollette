@@ -61,6 +61,7 @@ public class MainActivity2 extends AppCompatActivity {
             filePicker.launch("*/*"); // puoi mettere "text/plain"
         });
 
+        DBHandler.init(this);
     }
 
     @Override
@@ -70,10 +71,15 @@ public class MainActivity2 extends AppCompatActivity {
         if (id == R.id.stato) {
             startPayManagement();
             return true;
-        } else if (id == R.id.help) {
+        } else if (id == R.id.glossario) {
             //  showHelp();
             return true;
-        } else {
+        } if (id == R.id.stato2) {
+            Intent intent = new Intent(MainActivity2.this, StatusActivity.class);
+
+            startActivity(intent);
+            return true;
+        }else {
             return super.onOptionsItemSelected(item);
         }
     }
