@@ -4,9 +4,7 @@
     <item
         android:id="@+id/stato"
         android:title="@string/stato" />
-    <item
-        android:id="@+id/stato2"
-        android:title="@string/stato2" />
+
     <item
         android:id="@+id/glossario"
         android:title="@string/glossario" />

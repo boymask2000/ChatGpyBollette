@@ -68,13 +68,12 @@ public class MainActivity2 extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection.
         int id = item.getItemId();
-        if (id == R.id.stato) {
-            startPayManagement();
+         if (id == R.id.glossario) {
+             Intent intent = new Intent(MainActivity2.this, GlossarioActivity.class);
+
+             startActivity(intent);
             return true;
-        } else if (id == R.id.glossario) {
-            //  showHelp();
-            return true;
-        } if (id == R.id.stato2) {
+        } if (id == R.id.stato) {
             Intent intent = new Intent(MainActivity2.this, StatusActivity.class);
 
             startActivity(intent);

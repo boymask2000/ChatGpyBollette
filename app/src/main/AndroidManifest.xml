@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
         <activity
+            android:name=".GlossarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".StatusActivity"
             android:exported="false" />
         <activity
