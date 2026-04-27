@@ -22,7 +22,7 @@ import java.util.List;
 public class DBHandler {
     public static StatusDatabase dbStatus;
     public static BollettaDatabase dbBolletta;
-    private static boolean inited=false;
+    private static boolean inited = false;
     static final Migration MIGRATION_2_4 = new Migration(2, 1) {
         @Override
         public void migrate(SupportSQLiteDatabase db) {
@@ -47,12 +47,12 @@ public class DBHandler {
 
         new Thread(() -> {
 
-                List<Status> stats = dbStatus.statusDao().getAll();
+            List<Status> stats = dbStatus.statusDao().getAll();
 
-                if (stats.size() == 0) {
-                    initStatus();
-                }
-            inited=true;
+            if (stats.size() == 0) {
+                initStatus();
+            }
+            inited = true;
         }).start();
     }
 
@@ -72,7 +72,7 @@ public class DBHandler {
         new Thread(() -> {
             Status status;
 
-            while( !inited){
+            while (!inited) {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -106,5 +106,10 @@ public class DBHandler {
             bollettaDao.insertAll(bolletta);
 
         }).start();
+    }
+
+    public static Bolletta getStoricoBollettaById( int id ){
+        BollettaDao bollettaDao = dbBolletta.bollettaDao();
+        return bollettaDao.getById(id);
     }
 }

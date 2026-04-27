@@ -6,7 +6,7 @@ import java.sql.Date;
 
 public class RowStoricoBolletteModel {
 
-    private final int id;
+    private final long id;
     private long data;
 
 
@@ -18,7 +18,7 @@ public class RowStoricoBolletteModel {
     public long getData() {
         return data;
     }
-    public int getId() {
+    public long getId() {
         return id;
     }
 

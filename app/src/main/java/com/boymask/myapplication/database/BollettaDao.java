@@ -12,6 +12,9 @@ public interface BollettaDao {
     @Query("SELECT * FROM Bolletta order by data desc")
     List<Bolletta> getAll();
 
+    @Query("SELECT * FROM Bolletta where uid = :uid")
+    Bolletta getById(long uid);
+
     @Insert
     void insertAll(Bolletta... bollette);
 }
