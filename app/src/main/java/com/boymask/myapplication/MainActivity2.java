@@ -20,14 +20,20 @@ import androidx.core.view.WindowInsetsCompat;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.boymask.UpdaterToken;
+import com.boymask.myapplication.database.Bolletta;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity2 extends AppCompatActivity {
 
     public static String API_KEY = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,26 +69,48 @@ public class MainActivity2 extends AppCompatActivity {
             filePicker.launch("*/*"); // puoi mettere "text/plain"
         });
 
+        buttons();
+
         DBHandler.init(this);
 
-        DBHandler.checkBolletteDispnibili(button, messaggio,this);
+        DBHandler.checkBolletteDisponibili(button, messaggio, this);
+    }
+
+    private void buttons() {
+        Button button = findViewById(R.id.button2);
+        button.setOnClickListener(v -> {
+            Bolletta bolletta = new Bolletta();
+
+            DBHandler.saveBolletta(bolletta);
+            new Thread(() -> {
+            List<Bolletta> bollette = DBHandler.getStoricoBollette();
+            System.out.println(bollette.size());
+            }).start();
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection.
         int id = item.getItemId();
-         if (id == R.id.glossario) {
-             Intent intent = new Intent(MainActivity2.this, GlossarioActivity.class);
+        if (id == R.id.glossario) {
+            Intent intent = new Intent(MainActivity2.this, GlossarioActivity.class);
 
-             startActivity(intent);
+            startActivity(intent);
             return true;
-        } if (id == R.id.stato) {
+        }
+        if (id == R.id.archivio) {
+            Intent intent = new Intent(MainActivity2.this, StoricoBollettaActivity.class);
+
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.stato) {
             Intent intent = new Intent(MainActivity2.this, StatusActivity.class);
 
             startActivity(intent);
             return true;
-        }else {
+        } else {
             return super.onOptionsItemSelected(item);
         }
     }

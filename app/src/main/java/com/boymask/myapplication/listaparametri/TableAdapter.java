@@ -26,7 +26,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView label;
-        EditText value;
+        TextView value;
 
         TextWatcher watcher;
 

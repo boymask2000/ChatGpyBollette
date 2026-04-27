@@ -36,7 +36,7 @@ public class StatusActivity extends AppCompatActivity {
         TextView immesse = findViewById(R.id.immesse);
         TextView disonibili = findViewById(R.id.disonibili);
 
-        StatusDao statusDao = DBHandler.db.statusDao();
+        StatusDao statusDao = DBHandler.dbStatus.statusDao();
 
         new Thread(() -> {
             List<Status> st = statusDao.getAll();

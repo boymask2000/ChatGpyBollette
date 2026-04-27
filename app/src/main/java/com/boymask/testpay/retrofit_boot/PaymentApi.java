@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 
 public interface PaymentApi {
 
@@ -18,4 +19,7 @@ public interface PaymentApi {
 
     @GET("products")
     Call<List<Product>> getProducts();
+
+    @PUT("update_token")
+    Call<Long> updateToken( @Body Long n);
 }

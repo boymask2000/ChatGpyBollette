@@ -14,12 +14,15 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.boymask.UpdaterToken;
+import com.boymask.myapplication.database.Bolletta;
 import com.boymask.myapplication.listaparametri.TableAdapter;
 import com.boymask.myapplication.listasuggerimenti.TableSuggAdapter;
 import com.boymask.myapplication.retrofit.OpenAIApi;
 import com.boymask.myapplication.retrofit.RetrofitClient;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -39,8 +42,9 @@ public class Suggester extends AppCompatActivity {
     private View progressBar;
     private View loadingText;
     private RecyclerView recyclerView;
+    private Bolletta bolletta = new Bolletta();
 
-  //  private TextView textView;
+    //  private TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,20 +55,20 @@ public class Suggester extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-       //  textView = findViewById(R.id.textView);
-        Button esci =  findViewById(R.id.Esci);
+        //  textView = findViewById(R.id.textView);
+        Button esci = findViewById(R.id.Esci);
         progressBar = findViewById(R.id.progressBar);
         loadingText = findViewById(R.id.loadingText);
         recyclerView = findViewById(R.id.recyclerView);
         String datiBolletta = getIntent().getStringExtra("datiBolletta");
-
-     //   loadingContainer.setVisibility(View.VISIBLE);
+        bolletta.dati = datiBolletta;
+        //   loadingContainer.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         esci.setOnClickListener(v -> {
             Intent myIntent2 = new Intent(getApplicationContext(), Suggester.class);
-                    Suggester.this.finish();
+            Suggester.this.finish();
 
-                });
+        });
         askGpt(datiBolletta);
     }
 
@@ -87,8 +91,7 @@ public class Suggester extends AppCompatActivity {
             contentArray.put(new JSONObject()
                     .put("type", "input_text")
                     //     .put("text", "Estrai nome, data, importo e codice fiscale in formato JSON"));
-                    .put("text", Prompt.PROMPT_ASK+":"+datiBolletta));
-
+                    .put("text", Prompt.PROMPT_ASK + ":" + datiBolletta));
 
 
             message.put("content", contentArray);
@@ -132,6 +135,7 @@ public class Suggester extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     private void reportOutput(String string) {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         runOnUiThread(() -> {
@@ -145,28 +149,36 @@ public class Suggester extends AppCompatActivity {
 
         try {
             JSONObject jsonObject = new JSONObject(string);
-
-            String text = jsonObject
+            getTokens(jsonObject);
+            String analisi = jsonObject
                     .getJSONArray("output")
                     .getJSONObject(0)
                     .getJSONArray("content")
                     .getJSONObject(0)
                     .getString("text");
-            text = text.replace("```json", "")
+            analisi = analisi.replace("```json", "")
                     .replace("```", "")
                     .trim();
 
-           // textView.setText(text);
-List<String> lista = buildListaRighe(text);
+            bolletta.analisi = analisi;
+
+            // textView.setText(text);
+            List<String> lista = buildListaRighe(analisi);
 
 
             TableSuggAdapter adapter = new TableSuggAdapter(lista);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
 
+            DBHandler.saveBolletta(bolletta);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void getTokens(JSONObject jsonObject) throws JSONException {
+        String tokens = JsonReader.getTokens(jsonObject);
+        UpdaterToken.update(Long.parseLong(tokens));
     }
 
     private List<String> buildListaRighe(String text) {

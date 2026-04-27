@@ -9,12 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.boymask.UpdaterToken;
 import com.boymask.myapplication.listaparametri.RowModel;
 import com.boymask.myapplication.listaparametri.TableAdapter;
 import com.boymask.myapplication.retrofit.OpenAIApi;
 import com.boymask.myapplication.retrofit.RetrofitClient;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -219,6 +221,7 @@ public class GPTDataReader extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(string);
 
+            getTokens(jsonObject);
             String text = jsonObject
                     .getJSONArray("output")
                     .getJSONObject(0)
@@ -238,8 +241,6 @@ public class GPTDataReader extends AppCompatActivity {
             StringBuilder result = new StringBuilder();
 
             try {
-                // JSONObject jsonObject = new JSONObject(string);
-
                 Iterator<String> keys = innerJson.keys();
 
                 while (keys.hasNext()) {
@@ -266,6 +267,12 @@ public class GPTDataReader extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    private void getTokens(JSONObject jsonObject) throws JSONException {
+        String tokens=JsonReader.getTokens(jsonObject);
+
+        UpdaterToken.update(Long.parseLong(tokens));
     }
 
     private void setValues(String key, String value, ArrayList<RowModel> data) {

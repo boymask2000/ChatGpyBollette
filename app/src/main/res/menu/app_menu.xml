@@ -6,6 +6,10 @@
         android:title="@string/stato" />
 
     <item
+        android:id="@+id/archivio"
+        android:title="@string/archivio" />
+
+    <item
         android:id="@+id/glossario"
         android:title="@string/glossario" />
 </menu>
