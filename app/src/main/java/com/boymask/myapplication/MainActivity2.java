@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
@@ -23,16 +21,10 @@ import androidx.core.view.WindowInsetsCompat;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.boymask.UpdaterToken;
-import com.boymask.myapplication.database.Bolletta;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
