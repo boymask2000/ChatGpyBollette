@@ -178,7 +178,7 @@ public class Suggester extends AppCompatActivity {
 
     private void getTokens(JSONObject jsonObject) throws JSONException {
         String tokens = JsonReader.getTokens(jsonObject);
-        UpdaterToken.update(Long.parseLong(tokens));
+        UpdaterToken.update(Long.parseLong(tokens), true);
     }
 
     private List<String> buildListaRighe(String text) {

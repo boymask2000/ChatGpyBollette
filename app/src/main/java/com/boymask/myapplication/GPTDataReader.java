@@ -108,7 +108,7 @@ public class GPTDataReader extends AppCompatActivity {
                             if (!response.isSuccessful()) {
                                 System.out.println("Upload error " + response);
                                 System.out.println(response.errorBody().string());
-                                reportOutput(response.errorBody().string());
+                                reportOutput(response.errorBody().string(), false);
                                 return;
                             }
 
@@ -179,12 +179,12 @@ public class GPTDataReader extends AppCompatActivity {
                                     String val = response.body().string();
                                     System.out.println(val);
                                     //  FileUtil.saveToDisk(val);
-                                    runOnUiThread(() -> reportOutput(val));
+                                    runOnUiThread(() -> reportOutput(val, false));
                                 } else {
                                     System.out.println("Errore analisi");
                                     String val = response.errorBody().string();
                                     System.out.println(val);
-                                    runOnUiThread(() -> reportOutput(val));
+                                    runOnUiThread(() -> reportOutput(val, false));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -202,7 +202,7 @@ public class GPTDataReader extends AppCompatActivity {
         }
     }
 
-    private void reportOutput(String string) {
+    private void reportOutput(String string, boolean incBoll) {
         data.clear();
         runOnUiThread(() -> {
             //   loadingContainer.setVisibility(View.GONE);
@@ -221,7 +221,7 @@ public class GPTDataReader extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(string);
 
-            getTokens(jsonObject);
+            getTokens(jsonObject, incBoll);
             String text = jsonObject
                     .getJSONArray("output")
                     .getJSONObject(0)
@@ -238,14 +238,12 @@ public class GPTDataReader extends AppCompatActivity {
 
             //   textView.setText("");
 
-            StringBuilder result = new StringBuilder();
-
             try {
                 Iterator<String> keys = innerJson.keys();
 
                 while (keys.hasNext()) {
                     String key = keys.next();
-                    System.out.println(key);
+
                     Object value = innerJson.optString(key);
                     setValues(key, value.toString(), data);
                     //      data.add(new RowModel(key,value.toString()));
@@ -269,10 +267,10 @@ public class GPTDataReader extends AppCompatActivity {
 
     }
 
-    private void getTokens(JSONObject jsonObject) throws JSONException {
+    private void getTokens(JSONObject jsonObject, boolean inc) throws JSONException {
         String tokens=JsonReader.getTokens(jsonObject);
 
-        UpdaterToken.update(Long.parseLong(tokens));
+        UpdaterToken.update(Long.parseLong(tokens), inc);
     }
 
     private void setValues(String key, String value, ArrayList<RowModel> data) {

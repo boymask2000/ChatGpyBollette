@@ -49,7 +49,7 @@ public class DettaglioStoricoBollettaActivity extends AppCompatActivity {
 
         new Thread(() -> {
             Bolletta b = DBHandler.getStoricoBollettaById((int) id);
-           
+
             runOnUiThread(() -> {
              //   analisi.setText(b.analisi);
                 List<String> lista = new ArrayList<>();

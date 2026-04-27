@@ -2,6 +2,7 @@ package com.boymask.testpay.retrofit_boot;
 
 
 
+import com.boymask.UpdaterTokenBean;
 import com.boymask.testpay.Product;
 
 import java.util.List;
@@ -21,5 +22,5 @@ public interface PaymentApi {
     Call<List<Product>> getProducts();
 
     @PUT("update_token")
-    Call<Long> updateToken( @Body Long n);
+    Call<UpdaterTokenBean> updateToken( @Body UpdaterTokenBean n);
 }
