@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
         <activity
+            android:name=".FirstUseActivity"
+            android:exported="false" />
+        <activity
             android:name=".DettaglioStoricoBollettaActivity"
             android:exported="false" />
         <activity

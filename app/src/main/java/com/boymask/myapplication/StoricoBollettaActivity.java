@@ -35,7 +35,7 @@ public class StoricoBollettaActivity extends AppCompatActivity {
         });
         esci = findViewById(R.id.Esci);
         esci.setOnClickListener(v -> {
-            Intent myIntent2 = new Intent(getApplicationContext(), StoricoBollettaActivity.class);
+          //  Intent myIntent2 = new Intent(getApplicationContext(), StoricoBollettaActivity.class);
             StoricoBollettaActivity.this.finish();
 
         });
