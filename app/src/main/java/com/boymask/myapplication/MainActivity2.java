@@ -35,8 +35,8 @@ public class MainActivity2 extends AppCompatActivity {
 
     public static String API_KEY = "";
     private TextView username;
-private Button image ;
-    private Button foto ;
+private ImageButton image ;
+    private ImageButton foto ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

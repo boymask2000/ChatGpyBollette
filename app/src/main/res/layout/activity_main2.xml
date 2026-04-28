@@ -62,24 +62,26 @@
             app:layout_constraintBottom_toTopOf="@+id/button"
             tools:layout_editor_absoluteX="179dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/foto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="36dp"
             android:layout_marginBottom="72dp"
             android:text="Foto"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/image" />
+            app:layout_constraintStart_toEndOf="@+id/image"
+            app:srcCompat="@drawable/camera"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginEnd="140dp"
             android:text="Image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/foto" />
+            app:layout_constraintTop_toTopOf="@+id/foto"
+            app:srcCompat="@drawable/galleria"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
