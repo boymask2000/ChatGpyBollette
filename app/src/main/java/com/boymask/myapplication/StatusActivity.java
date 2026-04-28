@@ -12,9 +12,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.boymask.User;
 import com.boymask.myapplication.database.Status;
 import com.boymask.myapplication.database.StatusDao;
 
+import java.io.IOException;
 import java.util.List;
 
 public class StatusActivity extends AppCompatActivity {
@@ -35,8 +37,21 @@ public class StatusActivity extends AppCompatActivity {
         TextView abbonamento = findViewById(R.id.abbonamento);
         TextView immesse = findViewById(R.id.immesse);
         TextView disonibili = findViewById(R.id.disonibili);
+        new Thread(() -> {
+            try {
+                User user = UserHandler.getUser();
 
-        StatusDao statusDao = DBHandler.dbStatus.statusDao();
+                runOnUiThread(() -> {
+                    abbonamento.setText(user.getAbbonamento());
+                    immesse.setText(String.valueOf(user.getBolletteAnalizzate()));
+                    disonibili.setText(String.valueOf(user.getBolletteTotali() - user.getBolletteAnalizzate()));
+                });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).start();
+/*        StatusDao statusDao = DBHandler.dbStatus.statusDao();
 
         new Thread(() -> {
             List<Status> st = statusDao.getAll();
@@ -49,7 +64,7 @@ public class StatusActivity extends AppCompatActivity {
                 immesse.setText(String.valueOf(status.bollette_fatte));
                 disonibili.setText(String.valueOf(status.bollette_disponibili));
             });
-        }).start();
+        }).start();*/
     }
 
     private void handleButtons() {

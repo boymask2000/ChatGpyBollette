@@ -5,9 +5,11 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
@@ -27,12 +29,14 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity2 extends AppCompatActivity {
 
     public static String API_KEY = "";
     private TextView username;
-
+private Button image ;
+    private Button foto ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,22 +49,27 @@ public class MainActivity2 extends AppCompatActivity {
             return insets;
         });
 
-        String user = getUsername();
-        username= findViewById(R.id.username);
-        username.setText(user);
-// Source - https://stackoverflow.com/a/25241224
-// Posted by Rahul Devganiya, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-04-27, License - CC BY-SA 3.0
+        String user = UserHandler.getUsername(this);
+        username = findViewById(R.id.username);
+        //   username.setText(user);
+        image= findViewById(R.id.image);
+        image.setOnClickListener(v -> {
+            Intent intent2 = new Intent(MainActivity2.this, ImageTakerActivity.class);
 
+            startActivity(intent2);
+        });
+        foto= findViewById(R.id.foto);
+        foto.setOnClickListener(v -> {
+            Intent intent2 = new Intent(MainActivity2.this, FotoTakerActivity.class);
 
-
+            startActivity(intent2);
+        });
 /*
 
         Intent intent2 = new Intent(MainActivity2.this, FirstUseActivity.class);
 
         startActivity(intent2);
 */
-
 
 
         API_KEY = Furbo.ketKey(this);
@@ -86,42 +95,25 @@ public class MainActivity2 extends AppCompatActivity {
             filePicker.launch("*/*"); // puoi mettere "text/plain"
         });
 
-        buttons();
+
 
         DBHandler.init(this);
 
-        DBHandler.checkBolletteDisponibili(button, messaggio, this);
+        UserHandler.checkBolletteDisponibili(button, user, messaggio, this);
+
+   //     buttons();
     }
-    public String getUsername() {
-        AccountManager manager = AccountManager.get(this);
-        Account[] accounts = manager.getAccountsByType("com.google");
-        List<String> possibleEmails = new LinkedList<String>();
 
-        for (Account account : accounts) {
-            // TODO: Check possibleEmail against an email regex or treat
-            // account.name as an email address only for certain account.type
-            // values.
-            possibleEmails.add(account.name);
-        }
-
-        if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
-            String email = possibleEmails.get(0);
-                return email;}
-            else
-                return null;
-
+    public String getUsername2() {
+        String androidId = Settings.Secure.getString(
+                getContentResolver(),
+                Settings.Secure.ANDROID_ID
+        );
+        return androidId;
     }
+
     private void buttons() {
-//        Button button = findViewById(R.id.button2);
-//        button.setOnClickListener(v -> {
-//            Bolletta bolletta = new Bolletta();
-//
-//            DBHandler.saveBolletta(bolletta);
-//            new Thread(() -> {
-//            List<Bolletta> bollette = DBHandler.getStoricoBollette();
-//            System.out.println(bollette.size());
-//            }).start();
-//        });
+        UserHandler.decBollette();
     }
 
     @Override

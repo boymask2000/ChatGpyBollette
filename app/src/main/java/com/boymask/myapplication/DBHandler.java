@@ -68,7 +68,7 @@ public class DBHandler {
         return s;
     }
 
-    public static void checkBolletteDisponibili(ImageButton button, TextView messaggio, Activity context) {
+    public static void checkBolletteDisponibili(ImageButton button, String userid, TextView messaggio, Activity context) {
         new Thread(() -> {
             Status status;
 

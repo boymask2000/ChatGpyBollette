@@ -178,6 +178,7 @@ public class GPTDataReader extends AppCompatActivity {
 
                                     String val = response.body().string();
                                     System.out.println(val);
+                                    UserHandler.decBollette();
                                     //  FileUtil.saveToDisk(val);
                                     runOnUiThread(() -> reportOutput(val, false));
                                 } else {

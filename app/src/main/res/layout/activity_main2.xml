@@ -12,7 +12,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,12 +21,13 @@
             android:id="@+id/button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@android:color/transparent"
 
+            android:background="@android:color/transparent"
             android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image"
+            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/messaggio"
+            app:layout_constraintTop_toTopOf="@+id/image"
             app:srcCompat="@drawable/app" />
 
         <ImageView
@@ -39,25 +40,46 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/rysolvia" />
 
+
         <TextView
             android:id="@+id/messaggio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:text=""
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
 
         <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="TextView"
+            android:layout_marginBottom="64dp"
+            android:text=""
+            app:layout_constraintBottom_toTopOf="@+id/button"
+            tools:layout_editor_absoluteX="179dp" />
+
+        <Button
+            android:id="@+id/foto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginBottom="72dp"
+            android:text="Foto"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image" />
+
+        <Button
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="140dp"
+            android:text="Image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/messaggio" />
+            app:layout_constraintTop_toTopOf="@+id/foto" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -65,7 +65,7 @@ public class Suggester extends AppCompatActivity {
         //   loadingContainer.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         esci.setOnClickListener(v -> {
-            Intent myIntent2 = new Intent(getApplicationContext(), Suggester.class);
+
             Suggester.this.finish();
 
         });
