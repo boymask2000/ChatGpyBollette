@@ -74,6 +74,12 @@ public class MainPayActivity extends AppCompatActivity {
 
         if (selectedProduct == null) return;
 
+        Log.d("PRODUCT", selectedProduct.name );
+        Log.d("PRODUCT", ""+ selectedProduct.price);
+        Log.d("PRODUCT", selectedProduct.id );
+        System.out.println(selectedProduct.description );
+
+
         showLoading(true);
 
         PaymentRequest request = new PaymentRequest(

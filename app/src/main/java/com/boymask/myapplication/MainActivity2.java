@@ -2,6 +2,7 @@ package com.boymask.myapplication;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -23,6 +25,9 @@ import androidx.core.view.WindowInsetsCompat;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,11 +40,12 @@ public class MainActivity2 extends AppCompatActivity {
 
     public static String API_KEY = "";
     private TextView username;
-private ImageButton image ;
-    private ImageButton foto ;
+    private ImageButton image;
+    private ImageButton foto;
+public static Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+context=this;
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main2);
@@ -52,28 +58,20 @@ private ImageButton image ;
         String user = UserHandler.getUsername(this);
         username = findViewById(R.id.username);
         //   username.setText(user);
-        image= findViewById(R.id.image);
+        image = findViewById(R.id.image);
         image.setOnClickListener(v -> {
             Intent intent2 = new Intent(MainActivity2.this, ImageTakerActivity.class);
 
             startActivity(intent2);
         });
-        foto= findViewById(R.id.foto);
+        foto = findViewById(R.id.foto);
         foto.setOnClickListener(v -> {
             Intent intent2 = new Intent(MainActivity2.this, FotoTakerActivity.class);
 
             startActivity(intent2);
         });
-/*
-
-        Intent intent2 = new Intent(MainActivity2.this, FirstUseActivity.class);
-
-        startActivity(intent2);
-*/
-
 
         API_KEY = Furbo.ketKey(this);
-
 
         ImageButton button = findViewById(R.id.button);
         TextView messaggio = findViewById(R.id.messaggio);
@@ -96,12 +94,11 @@ private ImageButton image ;
         });
 
 
-
         DBHandler.init(this);
 
         UserHandler.checkBolletteDisponibili(button, user, messaggio, this);
 
-   //     buttons();
+        //     buttons();
     }
 
     public String getUsername2() {
@@ -120,6 +117,12 @@ private ImageButton image ;
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection.
         int id = item.getItemId();
+        if (id == R.id.logger) {
+            Intent intent = new Intent(MainActivity2.this, LoggerActivity.class);
+
+            startActivity(intent);
+            return true;
+        }
         if (id == R.id.glossario) {
             Intent intent = new Intent(MainActivity2.this, GlossarioActivity.class);
 

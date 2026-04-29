@@ -12,4 +12,8 @@
     <item
         android:id="@+id/glossario"
         android:title="@string/glossario" />
+
+    <item
+        android:id="@+id/logger"
+        android:title="@string/logger" />
 </menu>

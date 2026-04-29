@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.boymask.RysLogger;
 import com.boymask.User;
 import com.boymask.myapplication.database.Status;
 import com.boymask.testpay.retrofit_boot.PaymentApi;
@@ -42,6 +43,7 @@ public class UserHandler {
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
                     Log.d("API", "Nome: " + user);
+                    RysLogger.add("User: "+user);
                     if (user.getBolletteTotali() - user.getBolletteAnalizzate() <= 0) {
                         context.runOnUiThread(() -> {
                             button.setEnabled(false);
@@ -51,12 +53,14 @@ public class UserHandler {
 
                 } else {
                     Log.e("API", "Errore risposta: " + response.code());
+                    RysLogger.add("Errore risposta: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.e("API", "Errore rete: " + t.getMessage());
+                RysLogger.add("Errore rete: " + t.getMessage());
             }
         });
     }
@@ -104,6 +108,7 @@ public class UserHandler {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.e("API", "Errore rete: " + t.getMessage());
+                RysLogger.add("Errore rete: " + t.getMessage());
             }
         });
     }
