@@ -26,14 +26,14 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView label;
-        TextView value;
+     //   TextView value;
 
         TextWatcher watcher;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             label = itemView.findViewById(R.id.textLabel);
-            value = itemView.findViewById(R.id.editValue);
+          //  value = itemView.findViewById(R.id.editValue);
         }
     }
 
@@ -55,11 +55,11 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
 
         // 🔥 rimuove watcher precedente
         if (holder.watcher != null) {
-            holder.value.removeTextChangedListener(holder.watcher);
+       //     holder.value.removeTextChangedListener(holder.watcher);
         }
 
         // 🔥 set valore senza loop
-        holder.value.setText(model.getValue());
+     //   holder.value.setText(model.getValue());
 
         // 🔥 watcher solo sulla seconda colonna
         holder.watcher = new TextWatcher() {
@@ -79,7 +79,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
             public void afterTextChanged(Editable s) {}
         };
 
-        holder.value.addTextChangedListener(holder.watcher);
+      //  holder.value.addTextChangedListener(holder.watcher);
     }
 
     @Override

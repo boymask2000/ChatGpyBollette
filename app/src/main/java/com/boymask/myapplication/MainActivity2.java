@@ -1,17 +1,12 @@
 package com.boymask.myapplication;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
@@ -25,16 +20,11 @@ import androidx.core.view.WindowInsetsCompat;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.ArrayList;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -42,10 +32,11 @@ public class MainActivity2 extends AppCompatActivity {
     private TextView username;
     private ImageButton image;
     private ImageButton foto;
-public static Context context;
+    public static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-context=this;
+        context = this;
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main2);
@@ -82,8 +73,10 @@ context=this;
                     if (uri != null) {
                         String pathContenuto = leggiFile(uri);
                         //   textView.setText(contenuto);
-                        Intent intent = new Intent(MainActivity2.this, GPTDataReader.class);
-                        intent.putExtra("content", pathContenuto);
+                        Intent intent = new Intent(MainActivity2.this, GPTPDFArrayActivity.class);
+                        ArrayList<String> vals = new ArrayList<>();
+                        vals.add(pathContenuto);
+                        intent.putStringArrayListExtra("content", vals);
                         startActivity(intent);
                     }
                 }
@@ -101,13 +94,6 @@ context=this;
         //     buttons();
     }
 
-    public String getUsername2() {
-        String androidId = Settings.Secure.getString(
-                getContentResolver(),
-                Settings.Secure.ANDROID_ID
-        );
-        return androidId;
-    }
 
     private void buttons() {
         UserHandler.decBollette();

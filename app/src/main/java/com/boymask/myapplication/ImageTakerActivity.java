@@ -1,5 +1,6 @@
 package com.boymask.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +19,8 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ImageTakerActivity extends AppCompatActivity {
@@ -38,12 +41,19 @@ public class ImageTakerActivity extends AppCompatActivity {
                         new ActivityResultContracts.PickMultipleVisualMedia(5), // max 5 immagini
                         uris -> {
                             if (!uris.isEmpty()) {
+                                ArrayList<String> paths=new ArrayList<>();
+                                uris.forEach(p->paths.add(p.getPath()));
+
                                 Toast.makeText(this, "Selezionate: " + uris.size(), Toast.LENGTH_SHORT).show();
 
                                 for (Uri uri : uris) {
                                     // QUI puoi usarle (upload, preview ecc.)
                                     System.out.println("URI: " + uri);
                                 }
+
+                                Intent intent = new Intent(ImageTakerActivity.this, GPTImageArrayActivity.class);
+                                intent.putStringArrayListExtra("content", paths);
+                                startActivity(intent);
                             } else {
                                 Toast.makeText(this, "Nessuna immagine selezionata", Toast.LENGTH_SHORT).show();
                             }

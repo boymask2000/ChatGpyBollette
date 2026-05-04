@@ -34,4 +34,11 @@ public interface PaymentApi {
             @Path("id") String userId,
             @Body User request
     );
+
+    @PUT("/users/abbonamento/put/{id}/{abb}")
+    Call<User> addAbbonamento(
+            @Path("id") String userId,
+            @Path("abb") String abb,
+            @Body User request
+    );
 }

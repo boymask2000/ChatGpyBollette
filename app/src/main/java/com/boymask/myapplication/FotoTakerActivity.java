@@ -1,5 +1,6 @@
 package com.boymask.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.boymask.ImageAdapter;
@@ -62,6 +63,18 @@ public class FotoTakerActivity extends AppCompatActivity {
         esci.setOnClickListener(v -> {
 
             FotoTakerActivity.this.finish();
+
+        });
+        Button continua = findViewById(R.id.cont);
+        continua.setOnClickListener(v -> {
+
+            FotoTakerActivity.this.finish();
+            ArrayList<String> paths = new ArrayList<>();
+            photoList.forEach(f->paths.add(f.getAbsolutePath()));
+
+            Intent intent = new Intent(FotoTakerActivity.this, GPTImageArrayActivity.class);
+            intent.putStringArrayListExtra("content", paths);
+            startActivity(intent);
 
         });
     }

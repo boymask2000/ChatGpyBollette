@@ -82,10 +82,14 @@ public class MainPayActivity extends AppCompatActivity {
 
         showLoading(true);
 
+        long amount = Math.round(selectedProduct.price );
+
         PaymentRequest request = new PaymentRequest(
                 selectedProduct.name,
-                (int) selectedProduct.price
+                amount
         );
+
+   ;
 
         api.createPaymentIntent(request).enqueue(new Callback<PaymentResponse>() {
             @Override
@@ -95,6 +99,8 @@ public class MainPayActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null) {
                     clientSecret = response.body().getClientSecret();
+                    Log.d("STRIPE",response.body().toString() );
+                    Log.d("STRIPE", "ClientSecret: " + clientSecret);
                     openPaymentSheet();
                 } else {
                     show("Errore server");
@@ -148,13 +154,16 @@ public class MainPayActivity extends AppCompatActivity {
     private void onPaymentResult(@NonNull PaymentSheetResult result) {
 
         if (result instanceof PaymentSheetResult.Completed) {
-            show("Pagamento OK 🎉");
+            show("Pagamento OK 🎉"+ selectedProduct);
+            UpdaterAbbonamento.add(selectedProduct, this);
 
         } else if (result instanceof PaymentSheetResult.Canceled) {
             show("Annullato");
 
-        } else {
-            show("Errore pagamento");
+        } if (result instanceof PaymentSheetResult.Failed) {
+            PaymentSheetResult.Failed failed = (PaymentSheetResult.Failed) result;
+            Log.e("STRIPE", failed.getError().getMessage(), failed.getError());
+            show("Errore: " + failed.getError().getMessage());
         }
     }
 
