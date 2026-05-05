@@ -168,4 +168,6 @@ public class Prompt {
             "- Se un dato non è presente, dillo chiaramente\n" +
             "- Non terminare con domande\n" +
             "- Scrivi in italiano";
+
+    public static String PROMPT_ACTION="";
 }
