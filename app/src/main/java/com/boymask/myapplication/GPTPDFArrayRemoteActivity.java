@@ -1,7 +1,6 @@
 package com.boymask.myapplication;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,22 +9,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.boymask.UpdaterToken;
+import com.boymask.RysLogger;
 import com.boymask.myapplication.listaparametri.RowModel;
 import com.boymask.myapplication.listaparametri.TableAdapter;
-import com.boymask.myapplication.retrofit.OpenAIApi;
-import com.boymask.myapplication.retrofit.RetrofitClient;
+import com.boymask.myapplication.retrofit.ApiGpt;
+import com.boymask.testpay.retrofit_boot.RetrofitBootClient;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,10 +31,8 @@ import retrofit2.Response;
 
 public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
 
-
-    String API_KEY = MainActivity2.API_KEY;
     private ArrayList<RowModel> data = new ArrayList<>();
-    private Button askGpt;
+    private Button esci;
     private View loadingContainer;
     private View progressBar;
     private View loadingText;
@@ -52,28 +48,24 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
         loadingText = findViewById(R.id.loadingText);
-        askGpt = findViewById(R.id.askgpt);
+        esci = findViewById(R.id.esci);
         loadingContainer = findViewById(R.id.loadingContainer);
         recyclerView = findViewById(R.id.recyclerView);
 
 // all'inizio mostro loading e nascondo lista
         loadingContainer.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        askGpt.setVisibility(View.GONE);
+        esci.setVisibility(View.GONE);
+        esci.setOnClickListener(v -> {
 
+            finish();
 
-        askGpt.setOnClickListener(v -> {
-
-
-            Intent intent = new Intent(GPTPDFArrayRemoteActivity.this, Suggester.class);
-            intent.putExtra("datiBolletta", collectDataString());
-            startActivity(intent);
         });
 
 
 
         ArrayList<String> paths = getIntent().getStringArrayListExtra("content");
-        uploadFilesSequentially(paths, 0, new ArrayList<>());
+        analyzeMultipleFiles(paths);
 
         //     textView = findViewById(R.id.textView);
 
@@ -82,110 +74,43 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
         //      callChatGpt(pathContent);
 
     }
-    private void uploadFilesSequentially(ArrayList<String> paths, int index, ArrayList<String> fileIds) {
+    private void analyzeMultipleFiles(ArrayList<String> paths) {
 
-        if (index >= paths.size()) {
-            // tutti caricati → analizza
-            analyzeMultipleFiles(RetrofitClient.getClient(), API_KEY, fileIds);
-            return;
-        }
+        List<String> filesbase64 = new ArrayList<>();
+        for (String path : paths)
+            filesbase64.add( encodeImageToBase64(path));
 
-        File file = new File(paths.get(index));
+        Map<String, Object> body = new HashMap<>();
+        body.put("pdf", filesbase64);
 
-        RequestBody requestFile =
-                RequestBody.create(file, MediaType.parse("application/octet-stream"));
+        ApiGpt api = RetrofitBootClient.getClient().create(ApiGpt.class);
 
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
-        RequestBody purpose =
-                RequestBody.create("assistants", MediaType.parse("text/plain"));
-
-        OpenAIApi api = RetrofitClient.getClient();
-
-        api.uploadFile("Bearer " + API_KEY, body, purpose)
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        try {
-                            if (!response.isSuccessful()) {
-                                System.out.println("Errore upload");
-                                return;
-                            }
-
-                            JSONObject json = new JSONObject(response.body().string());
-                            String fileId = json.getString("id");
-
-                            fileIds.add(fileId);
-
-                            // continua con il prossimo file
-                            uploadFilesSequentially(paths, index + 1, fileIds);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+        api.analyzepdf(body).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (response.body() != null) {
+                        String val = response.body().string();
+                        runOnUiThread(() -> reportOutput(val));
+                    }
+                    if (response.errorBody() != null) {
+                        String val = response.errorBody().string();
+                        runOnUiThread(() -> reportOutput(val));
                     }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
-    }
-    private void analyzeMultipleFiles(OpenAIApi api, String apiKey, ArrayList<String> fileIds) {
-
-        try {
-            JSONObject requestJson = new JSONObject();
-            requestJson.put("model", Prompt.MODEL);
-
-            JSONArray inputArray = new JSONArray();
-            JSONObject message = new JSONObject();
-            message.put("role", "user");
-
-            JSONArray contentArray = new JSONArray();
-
-            // testo richiesta
-            contentArray.put(new JSONObject()
-                    .put("type", "input_text")
-                    .put("text", Prompt.PROMPT_ASK));
-
-            // 👇 aggiungi TUTTI i file
-            for (String fileId : fileIds) {
-                contentArray.put(new JSONObject()
-                        .put("type", "input_file")
-                        .put("file_id", fileId));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    RysLogger.add(e);
+                }
             }
 
-            message.put("content", contentArray);
-            inputArray.put(message);
-            requestJson.put("input", inputArray);
-
-            RequestBody body = RequestBody.create(
-                    requestJson.toString(),
-                    MediaType.parse("application/json")
-            );
-
-            api.analyzeFile("Bearer " + apiKey, body)
-                    .enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            try {
-                                String val = response.body().string();
-                                runOnUiThread(() -> reportOutput(val, false));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+                RysLogger.add(t);
+            }
+        });
     }
     private String collectDataString() {
         StringBuilder out = new StringBuilder();
@@ -198,12 +123,12 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
 
 
 
-    private void reportOutput(String string, boolean incBoll) {
+    private void reportOutput(String string) {
         data.clear();
         runOnUiThread(() -> {
             //   loadingContainer.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            askGpt.setVisibility(View.VISIBLE);
+            esci.setVisibility(View.VISIBLE);
 
             progressBar.setVisibility(View.GONE);
             loadingText.setVisibility(View.GONE);
@@ -214,7 +139,7 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(string);
 
-            getTokens(jsonObject, incBoll);
+
             String text = jsonObject
                     .getJSONArray("output")
                     .getJSONObject(0)
@@ -243,11 +168,6 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
 
     }
 
-    private void getTokens(JSONObject jsonObject, boolean inc) throws JSONException {
-        String tokens = JsonReader.getTokens(jsonObject);
-
-        UpdaterToken.update(Long.parseLong(tokens), inc);
-    }
 
     private void setValues(String key, String value, ArrayList<RowModel> data) {
         String s = key + " " + value;
@@ -270,5 +190,20 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
             data.add(new RowModel(v1, v2));
         }
 
+    }
+    private String encodeImageToBase64(String path) {
+        try {
+            File file = new File(path);
+            FileInputStream fis = new FileInputStream(file);
+            byte[] bytes = new byte[(int) file.length()];
+            fis.read(bytes);
+            fis.close();
+
+            return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

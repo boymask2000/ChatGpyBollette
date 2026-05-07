@@ -30,10 +30,10 @@ import java.util.List;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    public static String API_KEY = "";
+
   //  private TextView username;
     public static Context context;
-    boolean isRemote;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +59,11 @@ public class MainActivity2 extends AppCompatActivity {
         ImageButton foto = findViewById(R.id.foto);
         foto.setOnClickListener(v -> {
             Intent intent2 = new Intent(MainActivity2.this, FotoTakerActivity.class);
-            intent2.putExtra("isRemote", isRemote);
+
             startActivity(intent2);
         });
 
-        API_KEY = Furbo.ketKey(this);
+
 
         ImageButton button = findViewById(R.id.button);
         TextView messaggio = findViewById(R.id.messaggio);
@@ -72,37 +72,24 @@ public class MainActivity2 extends AppCompatActivity {
                 new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
-                        if (isRemote) {
-             /*               String pathContenuto = leggiFile(uri);
+
+                           String pathContenuto = leggiFile(uri);
 
                             Intent intent = new Intent(MainActivity2.this, GPTPDFArrayRemoteActivity.class);
                             ArrayList<String> vals = new ArrayList<>();
                             vals.add(pathContenuto);
                             intent.putStringArrayListExtra("content", vals);
-                            startActivity(intent);*/
-                        } else {
-                            String pathContenuto = leggiFile(uri);
-
-                            Intent intent = new Intent(MainActivity2.this, GPTPDFArrayActivity.class);
-                            ArrayList<String> vals = new ArrayList<>();
-                            vals.add(pathContenuto);
-                            intent.putStringArrayListExtra("content", vals);
                             startActivity(intent);
-                        }
+
+
                     }
                 }
         );
 
-        View remote = findViewById(R.id.remote);
-        remote.setOnClickListener(v -> {
-            isRemote = true;
-            Intent intent2 = new Intent(MainActivity2.this, FotoTakerActivity.class);
-            intent2.putExtra("isRemote", isRemote);
-            startActivity(intent2);
-        });
+;
 
         button.setOnClickListener(v -> {
-            isRemote = false;
+
             filePicker.launch("*/*"); // puoi mettere "text/plain"
         });
 

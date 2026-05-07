@@ -12,4 +12,7 @@ public interface ApiGpt {
 
     @POST("/api/gpt/analyze")
     Call<ResponseBody> analyze(@Body Map<String, Object> body);
+
+    @POST("/api/gpt/analyzepdf")
+    Call<ResponseBody> analyzepdf(@Body Map<String, Object> body);
 }

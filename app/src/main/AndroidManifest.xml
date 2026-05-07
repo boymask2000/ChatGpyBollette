@@ -26,9 +26,6 @@
             android:name=".GPTImageArrayActivity"
             android:exported="false" />
         <activity
-            android:name=".GPTPDFArrayActivity"
-            android:exported="false" />
-        <activity
             android:name=".LoggerActivity"
             android:exported="false" />
         <activity
@@ -37,9 +34,6 @@
             android:theme="@style/Theme.MyApp" />
         <activity
             android:name=".ImageTakerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".FirstUseActivity"
             android:exported="false" />
         <activity
             android:name=".DettaglioStoricoBollettaActivity"
@@ -53,12 +47,7 @@
         <activity
             android:name=".MainPayActivity"
             android:exported="false" />
-        <activity
-            android:name=".Suggester"
-            android:exported="false" />
-        <activity
-            android:name=".GPTDataReaderPDF"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity2"
             android:exported="true"
@@ -70,10 +59,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".GPTDataReader"
-            android:exported="false"
-            android:theme="@style/Theme.MyApp" />
+>
     </application>
 
 </manifest>

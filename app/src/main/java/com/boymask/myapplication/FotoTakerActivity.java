@@ -40,7 +40,6 @@ public class FotoTakerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_foto_taker);
 
-        boolean isRemote = getIntent().getBooleanExtra("isRemote", false);
 
         previewView = findViewById(R.id.previewView);
         Button btnCapture = findViewById(R.id.btnCapture);
@@ -76,7 +75,6 @@ public class FotoTakerActivity extends AppCompatActivity {
 
             Intent intent = new Intent(FotoTakerActivity.this, GPTImageArrayActivity.class);
             intent.putStringArrayListExtra("content", paths);
-            intent.putExtra("isRemote", isRemote);
             startActivity(intent);
 
         });

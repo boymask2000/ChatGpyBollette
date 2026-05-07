@@ -2,7 +2,6 @@ package com.boymask.testpay.retrofit_boot;
 
 
 
-import com.boymask.UpdaterTokenBean;
 import com.boymask.User;
 import com.boymask.testpay.Product;
 
@@ -22,9 +21,6 @@ public interface PaymentApi {
 
     @GET("products")
     Call<List<Product>> getProducts();
-
-    @PUT("update_token")
-    Call<UpdaterTokenBean> updateToken( @Body UpdaterTokenBean n);
 
     @GET("users/get/{id}")
     Call<User> getUser(@Path("id")  String userid);

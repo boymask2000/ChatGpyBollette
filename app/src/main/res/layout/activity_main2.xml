@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -25,21 +25,25 @@
             android:background="@android:color/transparent"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toStartOf="@+id/image"
-            app:layout_constraintHorizontal_bias="0.632"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/image"
             app:srcCompat="@drawable/app" />
 
+
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="409dp"
-            android:layout_height="473dp"
-            android:layout_marginTop="48dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintBottom_toTopOf="@+id/button"
+
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/rysolvia" />
-
+            app:layout_constraintVertical_bias="0.5"
+            app:srcCompat="@drawable/rysolvia_min" />
 
         <TextView
             android:id="@+id/messaggio"
@@ -52,15 +56,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginBottom="64dp"
-            android:text=""
-            app:layout_constraintBottom_toTopOf="@+id/button"
-            tools:layout_editor_absoluteX="179dp" />
 
         <ImageButton
             android:id="@+id/foto"
@@ -70,8 +65,10 @@
             android:layout_marginBottom="72dp"
             android:text="Foto"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/image"
-            app:srcCompat="@drawable/camera"/>
+            app:srcCompat="@drawable/camera" />
 
         <ImageButton
             android:id="@+id/image"
@@ -80,20 +77,10 @@
             android:layout_marginEnd="140dp"
             android:text="Image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/foto"
-            app:srcCompat="@drawable/galleria"/>
-
-        <Button
-            android:id="@+id/remote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Remote"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.899"
+            app:layout_constraintHorizontal_bias="0.839"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/foto"
-            app:layout_constraintVertical_bias="0.304" />
+            app:layout_constraintTop_toTopOf="@+id/foto"
+            app:srcCompat="@drawable/galleria" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
