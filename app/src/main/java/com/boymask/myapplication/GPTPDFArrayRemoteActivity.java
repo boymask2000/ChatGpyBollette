@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -97,7 +98,8 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
                     }
                     if (response.errorBody() != null) {
                         String val = response.errorBody().string();
-                        runOnUiThread(() -> reportOutput(val));
+                        mostraPopup(val);
+                        //  runOnUiThread(() -> reportOutput(val));
                     }
 
                 } catch (Exception e) {
@@ -122,7 +124,22 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
         return out.toString();
     }
 
+    private void mostraPopup(String messaggio) {
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Messaggio");
+        builder.setMessage(messaggio);
+
+        builder.setPositiveButton("Esci", (dialog, which) -> {
+            finish(); // chiude l'activity
+        });
+
+        builder.setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     private void reportOutput(String string) {
         data.clear();
