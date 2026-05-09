@@ -61,8 +61,10 @@ public class MainPayActivity extends AppCompatActivity {
         esci.setOnClickListener(v -> finish());
 
         // Stripe publishable key
-        PaymentConfiguration.init(getApplicationContext(), "pk_test_51TPKCpGsszBGGRxAkgkQHGudbvT09mVP2X85zgflyC4zWxff5PdLQoVMTq1yXQpxJEQtSUS7lWqYhuDVQH25bQug00ln388y8u");
-
+      //  51TPKCpGsszBGGRxAn8U8aok7IWgmqn9bhOyTf0mc1iuJQh7kNO2U3Dp5CyOkajZBEwSwoGjH5PXlcotHrbJ5BZiC00m4Ui546G
+     //           pk_test_51TPKCpGsszBGGRxAkgkQHGudbvT09mVP2X85zgflyC4zWxff5PdLQoVMTq1yXQpxJEQtSUS7lWqYhuDVQH25bQug00ln388y8u
+    //    PaymentConfiguration.init(getApplicationContext(), "pk_test_51TPKCpGsszBGGRxAkgkQHGudbvT09mVP2X85zgflyC4zWxff5PdLQoVMTq1yXQpxJEQtSUS7lWqYhuDVQH25bQug00ln388y8u");
+        PaymentConfiguration.init(getApplicationContext(), MainActivity2.stripeKey);
         paymentSheet = new PaymentSheet(this, this::onPaymentResult);
 
         setupRecyclerView();
@@ -156,8 +158,8 @@ public class MainPayActivity extends AppCompatActivity {
         Log.d("PRODUCT", selectedProduct.id);
 
         // Stripe usa i centesimi
-        long amount = Math.round(selectedProduct.price * 100);
-
+      //  long amount = Math.round(selectedProduct.price * 100);
+        long amount =selectedProduct.price;
         PaymentRequest request = new PaymentRequest(selectedProduct.name, amount);
 
         showLoading(true);

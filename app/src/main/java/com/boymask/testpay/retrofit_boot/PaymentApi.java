@@ -6,6 +6,7 @@ import com.boymask.User;
 import com.boymask.testpay.Product;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -37,4 +38,7 @@ public interface PaymentApi {
             @Path("abb") String abb,
             @Body User request
     );
+
+    @GET("/api/payment/get")
+    Call<Map<String, String>> getPayKey();
 }

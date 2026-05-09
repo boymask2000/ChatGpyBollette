@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,8 +19,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import android.util.Log;
-import android.widget.TextView;
+import com.boymask.RysLogger;
+import com.boymask.testpay.retrofit_boot.PaymentApi;
+import com.boymask.testpay.retrofit_boot.RetrofitBootClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,6 +29,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -35,6 +42,7 @@ public class MainActivity2 extends AppCompatActivity {
     public static Context context;
 
     public static String user;
+    public static String stripeKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +111,36 @@ public class MainActivity2 extends AppCompatActivity {
 
         UserHandler.checkBolletteDisponibili(buttons, user, messaggio, this);
 
+        getPayKey();
         //     buttons();
+    }
+
+    private void getPayKey() {
+
+        PaymentApi api = RetrofitBootClient.getClient().create(PaymentApi.class);
+        Call<Map<String, String>> call = api.getPayKey();
+
+        call.enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                Map<String, String> txt = response.body();
+              //  Log.d("SERVER_RESPONSE", txt.get("key"));
+                if (response.isSuccessful() && response.body() != null) {
+                    stripeKey= response.body().get("key");
+
+                } else {
+                    Log.e("API", "Errore risposta: " + response.code());
+                    RysLogger.add("Errore risposta: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                Log.e("API", "Errore rete: " + t.getMessage());
+                RysLogger.add("Errore rete: " + t.getMessage());
+            }
+        });
+
     }
 
 
