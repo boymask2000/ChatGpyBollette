@@ -31,9 +31,9 @@ public class RetrofitBootClient {
 
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(60, TimeUnit.SECONDS)
-                    .readTimeout(120, TimeUnit.SECONDS)   // importante per risposte lente
-                    .writeTimeout(120, TimeUnit.SECONDS)  // importante per upload file
+                    .connectTimeout(120, TimeUnit.SECONDS)
+                    .readTimeout(300, TimeUnit.SECONDS)   // importante per risposte lente
+                    .writeTimeout(300, TimeUnit.SECONDS)  // importante per upload file
                     .retryOnConnectionFailure(true)
                     .build();
 
