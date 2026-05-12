@@ -180,6 +180,7 @@ public class GPTImageArrayActivity extends AppCompatActivity  {
                 text = text.replace("```json", "")
                         .replace("```", "")
                         .trim();
+                DBHandler.saveBolletta(text);
                 //    JSONObject innerJson = new JSONObject(text);
                 setValues2(text, data);
             }catch(JSONException je){

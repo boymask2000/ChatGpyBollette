@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.boymask.RysLogger;
+import com.boymask.myapplication.database.Bolletta;
 import com.boymask.myapplication.listaparametri.RowModel;
 import com.boymask.myapplication.listaparametri.TableAdapter;
 import com.boymask.myapplication.retrofit.ApiGpt;
@@ -95,6 +96,8 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
                     if (response.body() != null) {
                         String val = response.body().string();
                         runOnUiThread(() -> reportOutput(val));
+
+
                     }
                     if (response.errorBody() != null) {
                         String val = response.errorBody().string();
@@ -115,6 +118,8 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
             }
         });
     }
+
+
     private String collectDataString() {
         StringBuilder out = new StringBuilder();
         for (RowModel m : data) {
@@ -168,7 +173,7 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
                     .replace("```", "")
                     .trim();
             System.out.println( text);
-
+            DBHandler.saveBolletta(text);
             try {
                 setValues("S", text, data);
 

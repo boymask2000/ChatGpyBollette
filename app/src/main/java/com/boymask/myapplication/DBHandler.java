@@ -6,6 +6,7 @@ import androidx.room.Room;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.boymask.RysLogger;
 import com.boymask.myapplication.database.Bolletta;
 import com.boymask.myapplication.database.BollettaDao;
 import com.boymask.myapplication.database.BollettaDatabase;
@@ -103,6 +104,13 @@ public class DBHandler {
 
         }).start();
     }
+    public static void saveBolletta(String val ){
+        Bolletta b = new Bolletta ();
+        b.analisi= val;
+        saveBolletta(b);
+
+    }
+
 
     public static Bolletta getStoricoBollettaById( int id ){
         BollettaDao bollettaDao = dbBolletta.bollettaDao();
