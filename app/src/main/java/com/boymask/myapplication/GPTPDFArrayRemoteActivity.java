@@ -15,6 +15,7 @@ import com.boymask.TextResultProcessor;
 import com.boymask.myapplication.database.Bolletta;
 import com.boymask.myapplication.listaparametri.RowModel;
 import com.boymask.myapplication.listaparametri.TableAdapter;
+import com.boymask.myapplication.listasuggerimenti.TableSuggAdapter;
 import com.boymask.myapplication.retrofit.ApiGpt;
 import com.boymask.testpay.retrofit_boot.RetrofitBootClient;
 
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -179,7 +181,10 @@ public class GPTPDFArrayRemoteActivity extends AppCompatActivity {
             try {
                 setValues("S", text, data);
 
-                TableAdapter adapter = new TableAdapter(data);
+                List<String> rows = new ArrayList<>();
+                rows.add(text);
+
+                TableSuggAdapter adapter = new TableSuggAdapter(rows);
 
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
                 recyclerView.setAdapter(adapter);
